@@ -16,20 +16,42 @@ class VBot extends Bot {
   private random_ids: Record<number, number> = {}
 
   send(event: MessageEvent, message: string) {
-    const random_id = Math.floor(Math.random() * 10^10)
+    const random_id = Math.floor(Math.random() * 10^6)
     this.random_ids[event.peer_id] = random_id
+
     apiVkRequest(methods.messages.send, {
       peer_id: event.peer_id,
       message,
       random_id,
-      keyboard: Markup.keyboard(['fff', 'fffgdf']).oneTime().toJSON(),
+      keyboard: JSON.stringify({
+        "one_time": false,
+        "buttons": [
+            [
+              {
+                action: {
+                    type: "text",
+                    payload: "{\"button\": \"1\"}",
+                    label: "Negative"
+                },
+              },
+              {
+                action: {
+                    type: "text",
+                    payload: "{\"button\": \"2\"}",
+                    label: "Positive"
+                },
+              },
+            ]
+        ]
+      }),
     })
   }
 
   messangeHandler(event: MessageEvent) {
     console.log('Event Message =>', event)
-    
-    if (event.random_id !== this.random_ids[event.peer_id]) {
+    // console.log(this.random_ids)
+    // console.log(event.random_id)
+    if (event.random_id !== +this.random_ids[event.peer_id]) {
       this.send(event, 'test');
     }
   }
