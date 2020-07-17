@@ -3,58 +3,13 @@ import methods from './methods';
 import { MessageEvent } from './events';
 import { convertMessage } from './converters';
 
-import * as Markup  from 'node-vk-bot-api/lib/markup';
+import { createKeyboard } from './keyboard';
 
-abstract class Bot {
-  // abstract send(): void;
-  // abstract connect(): void;
-}
-
-class VBot extends Bot {
+abstract class BotConnection {
   private server: string
   private key: string
-  private random_ids: Record<number, number> = {}
 
-  send(event: MessageEvent, message: string) {
-    const random_id = Math.floor(Math.random() * 10^6)
-    this.random_ids[event.peer_id] = random_id
-
-    apiVkRequest(methods.messages.send, {
-      peer_id: event.peer_id,
-      message,
-      random_id,
-      keyboard: JSON.stringify({
-        "one_time": false,
-        "buttons": [
-            [
-              {
-                action: {
-                    type: "text",
-                    payload: "{\"button\": \"1\"}",
-                    label: "Negative"
-                },
-              },
-              {
-                action: {
-                    type: "text",
-                    payload: "{\"button\": \"2\"}",
-                    label: "Positive"
-                },
-              },
-            ]
-        ]
-      }),
-    })
-  }
-
-  messangeHandler(event: MessageEvent) {
-    console.log('Event Message =>', event)
-    // console.log(this.random_ids)
-    // console.log(event.random_id)
-    if (event.random_id !== +this.random_ids[event.peer_id]) {
-      this.send(event, 'test');
-    }
-  }
+  abstract messangeHandler(event: MessageEvent): void
 
   eventHandler(updates: any[][]) {
     updates.forEach(([eventKey, ...params]: any) => {
@@ -98,6 +53,61 @@ class VBot extends Bot {
           this.connectPoll(response.ts)
         }
       )
+  }
+}
+
+interface SendMessageOptions {
+  message: string
+  keyboard?: string
+}
+
+interface Context {
+  event: MessageEvent
+
+  send: (event: MessageEvent, options: SendMessageOptions) => void
+
+  reply: (message: string, keyboard?: string) => void
+}
+
+type EventHandler = (ctx: Context) => void
+
+class VBot extends BotConnection {
+  private eventsHandlers: EventHandler[] = []
+
+  createCtx(event: MessageEvent): Context {
+    return {
+      event,
+      send: this.send,
+      reply: (message, keyboard) => this.send(event, {message, keyboard})
+    }
+  }
+
+  send(event: MessageEvent, {message, keyboard}: SendMessageOptions) {
+    const random_id = Math.floor(Math.random() * 10**6)
+
+    apiVkRequest(methods.messages.send, {
+      peer_id: event.peer_id,
+      message,
+      random_id,
+      keyboard,
+    })
+      .then(({data}) => console.log(data))
+  }
+
+  on(eventHandler: EventHandler) {
+    this.eventsHandlers.push(eventHandler)
+  }
+
+  messangeHandler(event: MessageEvent) {
+    // console.log('Event Message =>', event)
+
+    if (event.random_id === 0) {
+      const ctx = this.createCtx(event)
+
+      this.eventsHandlers.forEach((eventHandler) => {
+        eventHandler(ctx)
+      })
+    }
   }
 }
 

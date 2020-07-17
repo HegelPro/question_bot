@@ -1,5 +1,10 @@
-interface MetaData {
+export interface Payload<D> {
+  type: string
+  data: D
+}
 
+interface MetaData {
+  payload?: Payload<any>
 }
 
 export type MessageParams = [number, number, number, number, string, MetaData, number]

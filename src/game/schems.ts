@@ -1,11 +1,11 @@
-interface SchemaMap {
+export interface SchemaMap {
   answer: string | null;
   text: string;
   photoUrl: string;
   routes: Record<number, SchemaMap>;
 }
 
-interface SchemaRoute {
+export interface SchemaRoute {
   answer: string | null;
   text: string;
   photoUrl: string;
@@ -25,6 +25,25 @@ export const game: SchemaMap = {
         21: {
           answer: '21',
           text: '21',
+          photoUrl: '',
+          routes: {
+            31: {
+              answer: '31',
+              text: '31',
+              photoUrl: '',
+              routes: {}
+            },
+            32: {
+              answer: '32',
+              text: '32',
+              photoUrl: '',
+              routes: {}
+            }
+          }
+        },
+        22: {
+          answer: '22',
+          text: '22',
           photoUrl: '',
           routes: {}
         }
@@ -58,5 +77,3 @@ export const generateRouts = ({routes, ...schema}: SchemaMap, currentRoute: stri
     }), {
       [currentRoute]: {...schema, routes: getRoutes(routes, currentRoute)},
     })
-
-console.log(generateRouts(game, '/quest'))
