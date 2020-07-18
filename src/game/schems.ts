@@ -77,3 +77,8 @@ export const generateRouts = ({routes, ...schema}: SchemaMap, currentRoute: stri
     }), {
       [currentRoute]: {...schema, routes: getRoutes(routes, currentRoute)},
     })
+
+
+export const baseGameRoute = '/quest'
+
+export const gameSchemas = generateRouts(game, baseGameRoute)

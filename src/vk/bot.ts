@@ -1,9 +1,7 @@
 import { apiVkRequest, connectVkPollApi } from './api';
 import methods from './methods';
-import { MessageEvent } from './events';
+import { MessageEvent, Payload } from './events';
 import { convertMessage } from './converters';
-
-import { createKeyboard } from './keyboard';
 
 abstract class BotConnection {
   private server: string
@@ -61,10 +59,12 @@ interface SendMessageOptions {
   keyboard?: string
 }
 
-interface Context {
+export interface Context {
   event: MessageEvent
 
   send: (event: MessageEvent, options: SendMessageOptions) => void
+
+  payload?: Payload<unknown>
 
   reply: (message: string, keyboard?: string) => void
 }
@@ -77,6 +77,7 @@ class VBot extends BotConnection {
   createCtx(event: MessageEvent): Context {
     return {
       event,
+      payload: event.metaData.payload && JSON.parse(event.metaData.payload),
       send: this.send,
       reply: (message, keyboard) => this.send(event, {message, keyboard})
     }
