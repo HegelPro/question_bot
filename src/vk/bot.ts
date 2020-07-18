@@ -92,7 +92,6 @@ class VBot extends BotConnection {
       random_id,
       keyboard,
     })
-      .then(({data}) => console.log(data))
   }
 
   on(eventHandler: EventHandler) {

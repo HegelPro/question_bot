@@ -81,4 +81,35 @@ export const generateRouts = ({routes, ...schema}: SchemaMap, currentRoute: stri
 
 export const baseGameRoute = '/quest'
 
-export const gameSchemas = generateRouts(game, baseGameRoute)
+
+
+
+// /*
+const kek = `id,11,21,22,31,32,33
+ответ,,Хорошо,Плохо,Было круто,Было хуево,Отстань
+вопрос,Как дела?,Как отдохнул?,В чем проблема?,Здорово,В чем проблема?,Ладно я пойду
+url картинки,,,,,,
+Переходы на следующую сцену,21.22,31.32,33,,33,
+,Начало,,,Конец,,Конец`
+
+const cells = kek
+  .split('\n')
+  .map(
+    str => str.split(',').filter((_, index) => index !== 0)
+  )
+  
+const transpose = matrix => matrix[0].map((col, i) => matrix.map(row => row[i]))
+
+export const gameTwo = transpose(cells).reduce((res, cur) => ({
+  ...res,
+  [cur[0]]: {
+    answer: cur[1],
+    text: cur[2],
+    url: cur[3],
+    routes: cur[4].split('.').filter(Boolean),
+  }
+}), {})
+// */
+
+// export const gameSchemas = generateRouts(game, baseGameRoute)
+export const gameSchemas = gameTwo

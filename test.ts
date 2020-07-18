@@ -3,7 +3,7 @@ import methods from "./src/vk/methods"
 import * as fs from 'fs'
 import Axios from "axios"
 
-import './src/game/schems';
+import './src/game/schemas'
 
 const hegelId = 541615064
 
