@@ -99,7 +99,7 @@ class VBot extends BotConnection {
   }
 
   messangeHandler(event: MessageEvent) {
-    // console.log('Event Message =>', event)
+    console.log('Event Message =>', event)
 
     if (event.random_id === 0) {
       const ctx = this.createCtx(event)

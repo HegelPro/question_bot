@@ -14,28 +14,28 @@ export interface SchemaRoute {
 
 export const game: SchemaMap = {
   answer: null,
-  text: 'start',
+  text: 'Начало квеста',
   photoUrl: '',
   routes: {
     11: {
-      answer: '1',
-      text: '1',
+      answer: '11',
+      text: 'Хуйня на шаге /11',
       photoUrl: '',
       routes: {
         21: {
           answer: '21',
-          text: '21',
+          text: 'Хуйня на шаге /21',
           photoUrl: '',
           routes: {
             31: {
               answer: '31',
-              text: '31',
+              text: 'Хуйня на шаге /31',
               photoUrl: '',
               routes: {}
             },
             32: {
               answer: '32',
-              text: '32',
+              text: 'Хуйня на шаге /32',
               photoUrl: '',
               routes: {}
             }
@@ -43,20 +43,20 @@ export const game: SchemaMap = {
         },
         22: {
           answer: '22',
-          text: '22',
+          text: 'Хуйня на шаге /22',
           photoUrl: '',
           routes: {}
         }
       }
     },
     12: {
-      answer: '2',
-      text: '2',
+      answer: '12',
+      text: 'Хуйня на шаге /12',
       photoUrl: '',
       routes: {
         22: {
           answer: '22',
-          text: '22',
+          text: 'Хуйня на шаге /22',
           photoUrl: '',
           routes: {}
         }

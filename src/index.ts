@@ -1,13 +1,7 @@
-// import * as VkBot from 'node-vk-bot-api';
-// import * as Markup  from 'node-vk-bot-api/lib/markup';
-// import { lineCommandKeys } from './lineCommands/commands';
-// import commandsCallbacks from './lineCommands/callbacks';
-// import userCommandsCallbacks from './userCommands/callbacks';
-// import { userCommandKeys } from './userCommands/commands';
-
 import Bot from './vk/bot';
 import { renderFromSchema } from './vk/keyboard';
 import { game, generateRouts } from './game/schems';
+import randomArrayElement from './utils/randomArrayElement';
 
 const routes = generateRouts(game, '/quest')
 
@@ -15,19 +9,18 @@ const myBot = new Bot()
 myBot.connect()
 
 
-
+const kek = ['ты пидор', 'слышь, чмо?!', 'Соси', 'Иди нахуй', 'ты пидор', 'ты пидор', 'ты пидор', 'ты пидор', 'ты пидор', 'ты пидор', 'ты пидор']
 myBot.on((ctx) => {
   // console.log(renderFromSchema(routes['/quest']))
 
   
   if (ctx.event.text === '/start') {
-    const route = renderFromSchema(routes['/quest'])
+    const route = routes['/quest']
     console.log('1 ->>', route)
 
-    ctx.reply('test', JSON.stringify(route))
+    ctx.reply(route.text, JSON.stringify(renderFromSchema(route)))
   }
-
-  if (ctx.event.metaData.payload) {
+  else if (ctx.event.metaData.payload) {
     const payload = JSON.parse(ctx.event.metaData.payload as any)
     // console.log(payload.data)
 
@@ -37,36 +30,11 @@ myBot.on((ctx) => {
 
       if (route) {
         if (Object.keys(route.routes).length > 0) {
-          ctx.reply(route.answer, JSON.stringify(renderFromSchema(route)))
+          ctx.reply(route.text, JSON.stringify(renderFromSchema(route)))
         } else {
-          ctx.reply('game over!')
+          ctx.reply('Конец игры')
         }
       }
     }
   }
 })
-
-// const bot = new VkBot(token);
-
-// lineCommandKeys.forEach(command => {
-//   bot.command(`/${command}`, commandsCallbacks[command])
-// })
-
-// bot.on((ctx: any) => {
-//   // console.log(ctx)
-//   // bot.sendMessage(ctx.form_id, 'Hello!')
-//   ctx.reply('fff', 'photo541615064_457239232')
-
-//   if (ctx.message.payload) {
-//     const action = JSON.parse(ctx.message.payload)
-//     // console.log(action)
-  
-//     if (action.button) {
-//       userCommandKeys.forEach(userCommand => {
-//         userCommandsCallbacks[userCommand](ctx)
-//       })
-//     }
-//   }
-// })
-
-// bot.startPolling()
