@@ -1,40 +1,32 @@
 import Bot, {Context} from './vk/bot';
-import { gameSchemas, baseGameRoute } from './game/schemas';
 import { renderFromVkSchema } from './vk/render';
-
-type Commands = '/start'
-const commands: Record<Commands, Commands> = {
-  '/start': '/start'
-}
-
-type Quests = 'gamePayload'
-const quests: Record<Quests, Quests> = {
-  'gamePayload': 'gamePayload'
-}
+import commands from './commands';
+import { SchemaRoute } from './game/schemas';
+import quests from './quests'
 
 const myBot = new Bot()
 myBot.connect()
 
 myBot.on((ctx) => {
   if (ctx.event.text === commands["/start"]) {
-    sendGameSchema(ctx, '11')
+    sendGameSchema(quests.gamePayload.schameRecord)(ctx, quests.gamePayload.startVertex)
   }
   
   if (
     ctx.payload
-    && ctx.payload.type === quests.gamePayload
+    && ctx.payload.type === quests.gamePayload.name
     && typeof ctx.payload.data === 'string'
   ) {
-    sendGameSchema(ctx, ctx.payload.data)
+    sendGameSchema(quests.gamePayload.schameRecord)(ctx, ctx.payload.data)
   }
 })
 
-const sendGameSchema = (ctx: Context, routeStr: string) => {
-  const route = gameSchemas[routeStr]
+const sendGameSchema = (game: Record<string, SchemaRoute>) => (ctx: Context, routeStr: string) => {
+  const route = game[routeStr]
 
   if (route) {
     if (Object.keys(route.routes).length > 0) {
-      ctx.reply(route.text, renderFromVkSchema(route))
+      ctx.reply(route.text, renderFromVkSchema(game)(route))
     } else {
       ctx.reply(route.text)
     }

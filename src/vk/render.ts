@@ -1,5 +1,5 @@
 import { Payload } from "./events"
-import { SchemaRoute, gameSchemas } from "../game/schemas"
+import { SchemaRoute } from "../game/schemas"
 import { createButton } from "./keyboard"
 
 type Quests = 'gamePayload'
@@ -13,10 +13,10 @@ const createGamePayload = (route: string): Payload<string> => ({
   data: route,
 })
 
-export const renderFromVkSchema = (schema: SchemaRoute) => {
+export const renderFromVkSchema = (game: Record<string, SchemaRoute>) => (schema: SchemaRoute) => {
   const buttons = schema.routes.map((route) => (
     createButton({
-      label: gameSchemas[route].answer,
+      label: game[route].answer,
       payload: createGamePayload(route),
     })
   ))
