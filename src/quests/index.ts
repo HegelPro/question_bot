@@ -3,7 +3,7 @@ import { SchemaRoute } from '../game/schemas'
 
 type QuestsNames = 'gamePayload'
 
-interface Quest<QuestsName extends string> {
+export interface Quest<QuestsName extends string> {
   name: QuestsName
   startVertex: string
   schameRecord: Record<string, SchemaRoute>
