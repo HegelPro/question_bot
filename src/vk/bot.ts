@@ -1,6 +1,6 @@
 import { apiVkRequest, connectVkPollApi } from './api';
 import methods from './methods';
-import { MessageEvent, Payload } from './events';
+import { MessageEvent, Payload, PayloadCreator, CreatePayload } from './events';
 import { convertMessage } from './converters';
 
 abstract class BotConnection {
@@ -59,17 +59,17 @@ interface SendMessageOptions {
   keyboard?: string
 }
 
-export interface Context {
+export interface Context<T = unknown> {
   event: MessageEvent
 
   send: (event: MessageEvent, options: SendMessageOptions) => void
 
-  payload?: Payload<unknown>
+  payload?: Payload<T>
 
   reply: (message: string, keyboard?: string) => void
 }
 
-type EventHandler = (ctx: Context) => void
+type EventHandler<T = unknown> = (ctx: Context<T>) => void
 
 class VBot extends BotConnection {
   private eventsHandlers: EventHandler[] = []
@@ -94,7 +94,25 @@ class VBot extends BotConnection {
     })
   }
 
-  on(eventHandler: EventHandler) {
+  command(command: string, eventHandler: EventHandler) {
+    this.addEvent((ctx) => {
+      if (ctx.event.text === command) {
+        eventHandler(ctx)
+      }
+    })
+  }
+
+  on<T>(createPayload: CreatePayload<T>, eventHandler: EventHandler<T>) {
+    this.addEvent((ctx) => {
+      if (ctx.payload) {
+        if (ctx.payload.type ===  createPayload(undefined as T).type) {
+          eventHandler(ctx as Context<T>)
+        }
+      }
+    })
+  }
+
+  addEvent<T>(eventHandler: EventHandler<T>) {
     this.eventsHandlers.push(eventHandler)
   }
 
