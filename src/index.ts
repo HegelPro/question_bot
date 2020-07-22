@@ -4,6 +4,8 @@ import commands from './commands';
 import quests, {Quest} from './quests'
 import {payloadCreator} from './vk/events'
 import { createButton } from './vk/keyboard';
+import loadPhoto from './vk/loadPhoto'
+
 
 const myBot = new Bot()
 myBot.connect()
@@ -11,21 +13,33 @@ myBot.connect()
 type SelectGames = 'questOne' | 'questTwo'
 const createSelectPayload = payloadCreator<SelectGames>('selectEvent')
 
-myBot.command(commands["/start"], (ctx) => {
-  ctx.reply('Выберети квест', JSON.stringify({
+myBot.command(commands["/photo"], (ctx) => {
+  loadPhoto.then(({data: {response: [photo]}}) => {
+    console.log(photo)
+    const attach = `photo${photo.owner_id}_${photo.id}`
+    console.log(attach)
+    ctx.reply('Фото', attach)
+  })
+})
+
+const startQuest = (ctx: Context) => {
+  ctx.reply('Выберети квест', undefined, JSON.stringify({
     "one_time": true,
     "buttons": [[
       createButton({
-        label: 'квест 1',
+        label: 'Тестовый квест 1',
         payload: createSelectPayload('questOne')
       }),
       createButton({
-        label: 'квест 2',
+        label: 'Тестовый квест 2',
         payload: createSelectPayload('questTwo')
       }),
     ]]
   }))
-})
+}
+
+myBot.command(commands["/start"], startQuest)
+myBot.command(commands['Начать'], startQuest)
 
 myBot.on(createSelectPayload, (ctx) => {
   if (ctx.payload.data === 'questOne') {
@@ -48,7 +62,7 @@ const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string
 
   if (route) {
     if (Object.keys(route.routes).length > 0) {
-      ctx.reply(route.text, renderFromVkSchema(quest)(route))
+      ctx.reply(route.text, undefined, renderFromVkSchema(quest)(route))
     } else {
       ctx.reply(route.text)
     }

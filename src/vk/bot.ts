@@ -57,6 +57,7 @@ abstract class BotConnection {
 interface SendMessageOptions {
   message: string
   keyboard?: string
+  attachment?: string
 }
 
 export interface Context<T = unknown> {
@@ -66,7 +67,7 @@ export interface Context<T = unknown> {
 
   payload?: Payload<T>
 
-  reply: (message: string, keyboard?: string) => void
+  reply: (message: string, attachment?: string, keyboard?: string) => void
 }
 
 type EventHandler<T = unknown> = (ctx: Context<T>) => void
@@ -79,11 +80,11 @@ class VBot extends BotConnection {
       event,
       payload: event.metaData.payload && JSON.parse(event.metaData.payload),
       send: this.send,
-      reply: (message, keyboard) => this.send(event, {message, keyboard})
+      reply: (message, attachment, keyboard) => this.send(event, {message, attachment, keyboard})
     }
   }
 
-  send(event: MessageEvent, {message, keyboard}: SendMessageOptions) {
+  send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions) {
     const random_id = Math.floor(Math.random() * 10**6)
 
     apiVkRequest(methods.messages.send, {
@@ -91,6 +92,7 @@ class VBot extends BotConnection {
       message,
       random_id,
       keyboard,
+      attachment,
     })
   }
 
