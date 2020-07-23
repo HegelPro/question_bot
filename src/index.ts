@@ -14,10 +14,7 @@ type SelectGames = 'questOne' | 'questTwo'
 const createSelectPayload = payloadCreator<SelectGames>('selectEvent')
 
 myBot.command(commands["/photo"], (ctx) => {
-  loadPhoto.then(({data: {response: [photo]}}) => {
-    console.log(photo)
-    const attach = `photo${photo.owner_id}_${photo.id}`
-    console.log(attach)
+  loadPhoto('1.png').then((attach) => {
     ctx.reply('Фото', attach)
   })
 })
@@ -25,16 +22,16 @@ myBot.command(commands["/photo"], (ctx) => {
 const startQuest = (ctx: Context) => {
   ctx.reply('Выберети квест', undefined, JSON.stringify({
     "one_time": true,
-    "buttons": [[
-      createButton({
+    "buttons": [
+      [createButton({
         label: 'Тестовый квест 1',
         payload: createSelectPayload('questOne')
-      }),
-      createButton({
-        label: 'Тестовый квест 2',
+      })],
+      [createButton({
+        label: 'Голосуй или Бухай',
         payload: createSelectPayload('questTwo')
-      }),
-    ]]
+      })],
+    ]
   }))
 }
 
@@ -45,12 +42,12 @@ myBot.on(createSelectPayload, (ctx) => {
   if (ctx.payload.data === 'questOne') {
     sendGameSchema(quests.questOne)(ctx, quests.questOne.startVertex)
   } else if (ctx.payload.data === 'questTwo') {
-    sendGameSchema(quests.questTwo)(ctx, quests.questTwo.startVertex)
+    sendGameSchema(quests.questThree)(ctx, quests.questThree.startVertex)
   }
 })
 
-myBot.on(quests.questTwo.createPayload, (ctx) => {
-  sendGameSchema(quests.questTwo)(ctx, ctx.payload.data)
+myBot.on(quests.questThree.createPayload, (ctx) => {
+  sendGameSchema(quests.questThree)(ctx, ctx.payload.data)
 })
 
 myBot.on(quests.questOne.createPayload, (ctx) => {
@@ -62,9 +59,21 @@ const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string
 
   if (route) {
     if (Object.keys(route.routes).length > 0) {
-      ctx.reply(route.text, undefined, renderFromVkSchema(quest)(route))
+      if(typeof route.photoUrl === 'string' && route.photoUrl.length > 10) {
+        loadPhoto('2.jpg')
+          .then((attach) => {
+            ctx
+              .reply(route.doing.slice(0, 500))
+              .then(() => ctx.reply(route.text, attach, renderFromVkSchema(quest)(route))
+          )
+        })
+      } else {
+        ctx
+          .reply(route.doing.slice(0, 500))
+          .then(() => ctx.reply(route.text, undefined, renderFromVkSchema(quest)(route)))
+      }
     } else {
-      ctx.reply(route.text)
+      ctx.reply(route.doing)
     }
   }
 }

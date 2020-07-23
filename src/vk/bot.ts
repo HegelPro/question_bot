@@ -63,11 +63,11 @@ interface SendMessageOptions {
 export interface Context<T = unknown> {
   event: MessageEvent
 
-  send: (event: MessageEvent, options: SendMessageOptions) => void
+  send: (event: MessageEvent, options: SendMessageOptions) => Promise<unknown>
 
   payload?: Payload<T>
 
-  reply: (message: string, attachment?: string, keyboard?: string) => void
+  reply: (message: string, attachment?: string, keyboard?: string) => Promise<unknown>
 }
 
 type EventHandler<T = unknown> = (ctx: Context<T>) => void
@@ -84,10 +84,10 @@ class VBot extends BotConnection {
     }
   }
 
-  send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions) {
+  send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions): Promise<unknown> {
     const random_id = Math.floor(Math.random() * 10**6)
 
-    apiVkRequest(methods.messages.send, {
+    return apiVkRequest(methods.messages.send, {
       peer_id: event.peer_id,
       message,
       random_id,
