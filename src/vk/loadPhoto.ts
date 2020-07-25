@@ -1,21 +1,12 @@
+import Axios from "axios"
 import { apiVkRequest } from "./api"
 import methods from "./methods"
-import * as FormData from 'form-data'
-import * as fs from 'fs'
-import Axios from "axios"
-
-const getPhoto = (name: string): FormData => {
-  const form = new FormData()
-  form.append('photo', fs.createReadStream('/Users/hegelpro/Documents/vk-bot/assets/images/' + name))
-  return form
-}
+import photoLoader from "../loaders/photoLoader"
 
 const loadPhoto = (name: string) => apiVkRequest(methods.photos.getMessagesUploadServer)
-  .then(({data}) => {
-    return data.response.upload_url
-  })
+  .then(({data}) => data.response.upload_url)
   .then((url) => {
-    const formPhoto = getPhoto(name)
+    const formPhoto = photoLoader(name)
     return Axios.post(url, formPhoto, {
       headers: {
         'Content-Type': `multipart/form-data; boundary=${formPhoto.getBoundary()}`,

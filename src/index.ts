@@ -8,20 +8,19 @@ import loadPhoto from './vk/loadPhoto'
 
 
 const myBot = new Bot()
-myBot.connect()
 
 type SelectGames = 'questOne' | 'questTwo'
 const createSelectPayload = payloadCreator<SelectGames>('selectEvent')
 
 myBot.command(commands["/photo"], (ctx) => {
-  loadPhoto('1.png').then((attach) => {
+  loadPhoto('/images/eltsin1.jpg').then((attach) => {
     ctx.reply('Фото', attach)
   })
 })
 
 const startQuest = (ctx: Context) => {
   ctx.reply('Выберети квест', undefined, JSON.stringify({
-    "one_time": true,
+    "one_time": false,
     "buttons": [
       [createButton({
         label: 'Тестовый квест 1',
@@ -60,7 +59,7 @@ const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string
   if (route) {
     if (Object.keys(route.routes).length > 0) {
       if(typeof route.photoUrl === 'string' && route.photoUrl.length > 10) {
-        loadPhoto('2.jpg')
+        loadPhoto('/images/eltsin1.jpg')
           .then((attach) => {
             ctx
               .reply(route.doing.slice(0, 500))
@@ -74,6 +73,11 @@ const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string
       }
     } else {
       ctx.reply(route.doing)
+        .then(() => {
+          startQuest(ctx)
+        })
     }
   }
 }
+
+myBot.connect()

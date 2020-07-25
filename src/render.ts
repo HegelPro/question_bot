@@ -3,7 +3,6 @@ import { createButton } from "./vk/keyboard"
 import { Quest } from "./quests"
 
 export const renderFromVkSchema = (quest: Quest<string>) => (schema: SchemaRoute) => {
-  console.log(schema.routes)
   const buttons = schema.routes.map((route) => (
     createButton({
       label: quest.schameRecord[route].answer,
@@ -12,7 +11,7 @@ export const renderFromVkSchema = (quest: Quest<string>) => (schema: SchemaRoute
   ))
 
   return JSON.stringify({
-    "one_time": true,
+    "one_time": false,
     "buttons": [buttons]
   })
 }
