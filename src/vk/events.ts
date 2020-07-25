@@ -12,7 +12,6 @@ export const payloadCreator: PayloadCreator = (type) => (data) => ({
 
 
 // VK
-
 interface MetaData {
   payload?: string
 }

@@ -6,16 +6,15 @@ import {payloadCreator} from './vk/events'
 import { createButton } from './vk/keyboard';
 import loadPhoto from './vk/loadPhoto'
 
-
 const myBot = new Bot()
 
 type SelectGames = 'questOne' | 'questTwo'
 const createSelectPayload = payloadCreator<SelectGames>('selectEvent')
 
 myBot.command(commands["/photo"], (ctx) => {
-  loadPhoto('/images/eltsin1.jpg').then((attach) => {
-    ctx.reply('Фото', attach)
-  })
+  loadPhoto('/images/eltsin1.jpg')
+    .then((attach) => ctx.reply('Фото', attach))
+    .catch(() => console.log('LoadPhoto "/photo" Error'))
 })
 
 const startQuest = (ctx: Context) => {
@@ -60,22 +59,23 @@ const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string
     if (Object.keys(route.routes).length > 0) {
       if(typeof route.photoUrl === 'string' && route.photoUrl.length > 10) {
         loadPhoto('/images/eltsin1.jpg')
-          .then((attach) => {
-            ctx
-              .reply(route.doing.slice(0, 500))
-              .then(() => ctx.reply(route.text, attach, renderFromVkSchema(quest)(route))
+          .then((attach) => ctx
+            .reply(route.doing.slice(0, 500))
+            .then(() => ctx.reply(route.text, attach, renderFromVkSchema(quest)(route)))
           )
-        })
+          .catch(() => console.log('Quest sendMessage Error'))
       } else {
         ctx
           .reply(route.doing.slice(0, 500))
           .then(() => ctx.reply(route.text, undefined, renderFromVkSchema(quest)(route)))
+          .catch(() => console.log('Quest sendMessage Error'))
       }
     } else {
       ctx.reply(route.doing)
         .then(() => {
           startQuest(ctx)
         })
+        .catch(() => console.log('Quest sendMessage Error'))
     }
   }
 }

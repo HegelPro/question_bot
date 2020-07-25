@@ -1,6 +1,6 @@
 import { apiVkRequest, connectVkPollApi } from './api';
 import methods from './methods';
-import { MessageEvent, Payload, PayloadCreator, CreatePayload } from './events';
+import { MessageEvent, Payload, CreatePayload } from './events';
 import { convertMessage } from './converters';
 
 abstract class BotConnection {
@@ -9,7 +9,7 @@ abstract class BotConnection {
 
   abstract messangeHandler(event: MessageEvent): void
 
-  eventHandler(updates: any[][]) {
+   eventHandler(updates: any[][]) {
     updates.forEach(([eventKey, ...params]: any) => {
       switch (eventKey) {
         case 4:
@@ -38,6 +38,7 @@ abstract class BotConnection {
         this.eventHandler(updates)
         this.connectPoll(ts)
       })
+      .catch(() => console.log('Connect Poll Bot Error'))
   }
 
   connect() {
@@ -51,6 +52,7 @@ abstract class BotConnection {
           this.connectPoll(response.ts)
         }
       )
+      .catch(() => console.log('Connect Bot Error'))
   }
 }
 
@@ -75,16 +77,16 @@ type EventHandler<T = unknown> = (ctx: Context<T>) => void
 class VBot extends BotConnection {
   private eventsHandlers: EventHandler[] = []
 
-  createCtx(event: MessageEvent): Context {
+  private createCtx(event: MessageEvent): Context {
     return {
       event,
       payload: event.metaData.payload && JSON.parse(event.metaData.payload),
-      send: this.send,
+      send: (event, ctx) => this.send(event, ctx),
       reply: (message, attachment, keyboard) => this.send(event, {message, attachment, keyboard})
     }
   }
 
-  send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions): Promise<unknown> {
+  private send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions): Promise<unknown> {
     const random_id = Math.floor(Math.random() * 10**6)
 
     return apiVkRequest(methods.messages.send, {
