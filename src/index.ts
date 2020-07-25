@@ -39,7 +39,7 @@ myBot.command(commands['Начать'], startQuest)
 
 myBot.on(createSelectPayload, (ctx) => {
   if (ctx.payload.data === 'questOne') {
-    sendGameSchema(quests.questOne)(ctx, quests.questOne.startVertex)
+    sendGameSchema(quests.questTwo)(ctx, quests.questTwo.startVertex)
   } else if (ctx.payload.data === 'questTwo') {
     sendGameSchema(quests.questThree)(ctx, quests.questThree.startVertex)
   }
@@ -49,8 +49,8 @@ myBot.on(quests.questThree.createPayload, (ctx) => {
   sendGameSchema(quests.questThree)(ctx, ctx.payload.data)
 })
 
-myBot.on(quests.questOne.createPayload, (ctx) => {
-  sendGameSchema(quests.questOne)(ctx, ctx.payload.data)
+myBot.on(quests.questTwo.createPayload, (ctx) => {
+  sendGameSchema(quests.questTwo)(ctx, ctx.payload.data)
 })
 
 const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string) => {

@@ -4,7 +4,9 @@ import * as path from 'path'
 
 const photoLoader = (name: string): FormData => {
   const form = new FormData()
-  form.append('photo', fs.createReadStream(path.join('/Users/hegelpro/Documents/vk-bot/assets') + name))
+  const filePath = path.join(__dirname, '../../assets', name)
+  console.log(filePath)
+  form.append('photo', fs.createReadStream(filePath))
   return form
 }
 

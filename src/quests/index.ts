@@ -1,10 +1,12 @@
-import questOne, {startVertex as startVertexOne} from './one'
 import questTwo, {startVertex as startVertexTwo} from './two'
 import questThree, {startVertex as startVertexThree} from './three'
 import { SchemaRoute } from '../game/schemas'
 import { CreatePayload, payloadCreator } from '../vk/events'
 
-type QuestsNames = 'questOne' | 'questThree'
+type QuestsNames =
+  // 'questOne'
+  'questTwo'
+  | 'questThree'
 
 export interface Quest<QuestsName extends string> {
   name: QuestsName
@@ -14,18 +16,18 @@ export interface Quest<QuestsName extends string> {
 } 
 
 const quests: Record<QuestsNames, Quest<QuestsNames>> = {
-  'questOne': {
-    name: 'questOne',
-    startVertex: startVertexOne,
-    schameRecord: questOne,
-    createPayload: payloadCreator('questOne')
-  },
-  // 'questTwo': {
-  //   name: 'questTwo',
-  //   startVertex: startVertexTwo,
-  //   schameRecord: questTwo,
-  //   createPayload: payloadCreator('questTwo')
+  // 'questOne': {
+  //   name: 'questOne',
+  //   startVertex: startVertexOne,
+  //   schameRecord: questOne,
+  //   createPayload: payloadCreator('questOne')
   // },
+  'questTwo': {
+    name: 'questTwo',
+    startVertex: startVertexTwo,
+    schameRecord: questTwo,
+    createPayload: payloadCreator('questTwo')
+  },
     'questThree': {
       name: 'questThree',
       startVertex: startVertexThree,
