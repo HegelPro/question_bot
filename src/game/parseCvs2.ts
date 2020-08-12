@@ -3,15 +3,16 @@ import CSVToArray from "../utils/CSVToArray"
 
 const parseCvs = (cvs: string): Record<string, SchemaRoute> =>
   CSVToArray(cvs)
+    .filter(row => Boolean(row[0]))
     .reduce(
       (res, cur) => ({
         ...res,
         [cur[0]]: {
           answer: cur[1],
-          doing: cur[2],
-          text: cur[3],
-          photoUrl: cur[4],
-          routes: [cur[5], cur[6], cur[7], cur[8]].filter(Boolean),
+          text: cur[2],
+          doing: '',
+          photoUrl: cur[3],
+          routes: [cur[4], cur[5], cur[6], cur[7]].filter(Boolean),
         }
       }),
       {},

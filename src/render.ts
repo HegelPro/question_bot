@@ -5,7 +5,7 @@ import { Quest } from "./quests"
 export const renderFromVkSchema = (quest: Quest<string>) => (schema: SchemaRoute) => {
   const buttons = schema.routes.map((route) => (
     createButton({
-      label: quest.schameRecord[route].answer,
+      label: quest.schameRecord[route].answer.slice(0, 40),
       payload: quest.createPayload(route),
     })
   ))

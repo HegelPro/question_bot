@@ -1,83 +1,29 @@
-import Bot, {Context} from './vk/bot';
-import { renderFromVkSchema } from './render';
+import Bot from './vk/bot';
+import { sendGameSchema, sendStartGameSchema, sendPhoto } from './send';
 import commands from './commands';
-import quests, {Quest} from './quests'
-import {payloadCreator} from './vk/events'
-import { createButton } from './vk/keyboard';
-import loadPhoto from './vk/loadPhoto'
+import quests, { createSelectPayload } from './quests'
 
 const myBot = new Bot()
 
-type SelectGames = 'questOne' | 'questTwo'
-const createSelectPayload = payloadCreator<SelectGames>('selectEvent')
-
-myBot.command(commands["/photo"], (ctx) => {
-  loadPhoto('/images/eltsin1.jpg')
-    .then((attach) => ctx.reply('Фото', attach))
-    .catch(() => console.log('LoadPhoto "/photo" Error'))
-})
-
-const startQuest = (ctx: Context) => {
-  ctx.reply('Выберети квест', undefined, JSON.stringify({
-    "one_time": false,
-    "buttons": [
-      [createButton({
-        label: 'Тестовый квест 1',
-        payload: createSelectPayload('questOne')
-      })],
-      [createButton({
-        label: 'Голосуй или Бухай',
-        payload: createSelectPayload('questTwo')
-      })],
-    ]
-  }))
-}
-
-myBot.command(commands["/start"], startQuest)
-myBot.command(commands['Начать'], startQuest)
+myBot.command(commands['/photo'], sendPhoto)
+myBot.command(commands['/start'], sendStartGameSchema)
+myBot.command(commands['Начать'], sendStartGameSchema)
 
 myBot.on(createSelectPayload, (ctx) => {
-  if (ctx.payload.data === 'questOne') {
+  if (ctx.payload.data === 'questTwo') {
     sendGameSchema(quests.questTwo)(ctx, quests.questTwo.startVertex)
-  } else if (ctx.payload.data === 'questTwo') {
-    sendGameSchema(quests.questThree)(ctx, quests.questThree.startVertex)
   }
-})
-
-myBot.on(quests.questThree.createPayload, (ctx) => {
-  sendGameSchema(quests.questThree)(ctx, ctx.payload.data)
+  // else if (ctx.payload.data === 'questThree') {
+  //   sendGameSchema(quests.questThree)(ctx, quests.questThree.startVertex)
+  // }
 })
 
 myBot.on(quests.questTwo.createPayload, (ctx) => {
   sendGameSchema(quests.questTwo)(ctx, ctx.payload.data)
 })
 
-const sendGameSchema = (quest: Quest<string>) => (ctx: Context, routeStr: string) => {
-  const route = quest.schameRecord[routeStr]
-
-  if (route) {
-    if (Object.keys(route.routes).length > 0) {
-      if(typeof route.photoUrl === 'string' && route.photoUrl.length > 10) {
-        loadPhoto('/images/eltsin1.jpg')
-          .then((attach) => ctx
-            .reply(route.doing.slice(0, 500))
-            .then(() => ctx.reply(route.text, attach, renderFromVkSchema(quest)(route)))
-          )
-          .catch(() => console.log('Quest sendMessage Error'))
-      } else {
-        ctx
-          .reply(route.doing.slice(0, 500))
-          .then(() => ctx.reply(route.text, undefined, renderFromVkSchema(quest)(route)))
-          .catch(() => console.log('Quest sendMessage Error'))
-      }
-    } else {
-      ctx.reply(route.doing)
-        .then(() => {
-          startQuest(ctx)
-        })
-        .catch(() => console.log('Quest sendMessage Error'))
-    }
-  }
-}
+// myBot.on(quests.questThree.createPayload, (ctx) => {
+//   sendGameSchema(quests.questThree)(ctx, ctx.payload.data)
+// })
 
 myBot.connect()
