@@ -21,7 +21,7 @@ function CSVToArray( strData: string, strDelimiter?: string ){
 
   // Create an array to hold our data. Give the array
   // a default empty first row.
-  var arrData = [[]];
+  var arrData: any[][] = [[]];
 
   // Create an array to hold our individual pattern
   // matching groups.

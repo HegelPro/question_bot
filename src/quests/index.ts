@@ -1,11 +1,9 @@
-import questTwo, {startVertex as startVertexTwo} from './two'
-// import questThree, {startVertex as startVertexThree} from './three'
+import questTwo from './two'
 import { SchemaRoute } from '../game/schemas'
 import { CreatePayload, payloadCreator } from '../vk/events'
 
 type QuestsNames =
   'questTwo'
-  // | 'questThree'
 
 export interface Quest<QuestsName extends string> {
   name: QuestsName
@@ -20,22 +18,16 @@ const quests: Record<QuestsNames, Quest<QuestsNames>> = {
   'questTwo': {
     name: 'questTwo',
     label: 'Тестовый 1',
-    startVertex: startVertexTwo,
+    startVertex: '11',
     schameRecord: questTwo,
     createPayload: payloadCreator('questTwo'),
     imageDir: '/images/questTwo',
   },
-  // 'questThree': {
-  //   name: 'questThree',
-  //   label: 'Голосуй или Бухай',
-  //   startVertex: startVertexThree,
-  //   schameRecord: questThree,
-  //   createPayload: payloadCreator('questThree')
-  // },
 }
 
 export const createSelectPayload = payloadCreator<QuestsNames>('selectEvent')
 
-export const questList = Object.keys(quests).map(name => quests[name]) as Quest<QuestsNames>[]
+export const questList = (Object.keys(quests) as QuestsNames[])
+  .map(name => quests[name])
 
 export default quests

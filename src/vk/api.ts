@@ -17,9 +17,9 @@ export const connectVkPollApi = ({
   key: string,
   ts: string,
 }) => axios.get(`https://${server}`, {
-    params: {
-      key,
-      ts,
-      ...VK_POLL_API_CONFIG,
-    },
-  })
+  params: {
+    key,
+    ts,
+    ...VK_POLL_API_CONFIG,
+  },
+})

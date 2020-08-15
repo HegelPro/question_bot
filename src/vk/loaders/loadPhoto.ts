@@ -1,7 +1,7 @@
 import Axios from "axios"
-import { apiVkRequest } from "./api"
-import methods from "./methods"
-import photoLoader from "../loaders/photoLoader"
+import { apiVkRequest } from "../api"
+import methods from "../methods"
+import photoLoader from "../../loaders/photoLoader"
 
 const loadPhoto = (name: string) => apiVkRequest(methods.photos.getMessagesUploadServer)
   .then(({data}) => data.response.upload_url)

@@ -4,8 +4,8 @@ import { MessageEvent, Payload, CreatePayload } from './events';
 import { convertMessage } from './converters';
 
 abstract class BotConnection {
-  private server: string
-  private key: string
+  private server: string | undefined
+  private key: string | undefined
 
   abstract messangeHandler(event: MessageEvent): void
 
@@ -25,20 +25,24 @@ abstract class BotConnection {
   }
 
   connectPoll(ts: string) {
-    connectVkPollApi({
-      server: this.server,
-      key: this.key,
-      ts,
-    })
-      .then(res => res.data)
-      .then(({ts, updates}: {
-        ts: string,
-        updates: any[][],
-      }) => {
-        this.eventHandler(updates)
-        this.connectPoll(ts)
+    if(this.server && this.key) {
+      connectVkPollApi({
+        server: this.server,
+        key: this.key,
+        ts,
       })
-      .catch(() => console.log('Connect Poll Bot Error'))
+        .then(res => res.data)
+        .then(({ts, updates}: {
+          ts: string,
+          updates: any[][],
+        }) => {
+          this.eventHandler(updates)
+          this.connectPoll(ts)
+        })
+        .catch(() => console.log('Connect Poll Bot Error'))
+    } else {
+      throw new Error('connectPoll')
+    }
   }
 
   connect() {
@@ -72,7 +76,7 @@ export interface Context<T = unknown> {
   reply: (message: string, attachment?: string, keyboard?: string) => Promise<unknown>
 }
 
-type EventHandler<T = unknown> = (ctx: Context<T>) => void
+type EventHandler<T = any> = (ctx: Context<T>) => void
 
 class VBot extends BotConnection {
   private eventsHandlers: EventHandler[] = []
@@ -109,7 +113,7 @@ class VBot extends BotConnection {
   on<T>(createPayload: CreatePayload<T>, eventHandler: EventHandler<T>) {
     this.addEvent((ctx) => {
       if (ctx.payload) {
-        if (ctx.payload.type ===  createPayload(undefined as T).type) {
+        if (ctx.payload.type ===  createPayload(undefined as any).type) {
           eventHandler(ctx as Context<T>)
         }
       }
