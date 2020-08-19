@@ -6,7 +6,7 @@ const imgFormats = ['.gif', '.jpg', '.png'];
 function findPhotoFile({
   fileName,
   dirName,
-} : {
+}: {
   fileName: string,
   dirName: string
 }): Promise<fs.ReadStream | undefined> {
@@ -15,7 +15,7 @@ function findPhotoFile({
     fs.readdir(dirPath, (err, files) => {
       imgFormats.forEach(format => {
         files.forEach(file => {
-          if(file === fileName + format) {
+          if (file === fileName + format) {
             const filePath = path.join(dirPath, fileName + format)
             res(fs.createReadStream(filePath))
           }

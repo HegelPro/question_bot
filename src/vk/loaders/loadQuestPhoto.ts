@@ -19,7 +19,6 @@ const loadPhoto = (photoFile: fs.ReadStream) => apiVkRequest(methods.photos.getM
     return data
   })
   .then(({data}) => apiVkRequest(methods.photos.saveMessagesPhoto, data))
-  
   .then(({data: {response: [photo]}}) =>  `photo${photo.owner_id}_${photo.id}`)
 
 export default loadPhoto

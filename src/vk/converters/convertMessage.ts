@@ -1,4 +1,4 @@
-import { MessageParams, MessageEvent } from "./events"
+import { MessageParams, MessageEvent } from "../events"
 
 export const convertMessage = (params: MessageParams): MessageEvent => ({
   message_id: params[0],

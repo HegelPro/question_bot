@@ -1,140 +1,24 @@
-import { apiVkRequest, connectVkPollApi } from './api';
-import methods from './methods';
-import { MessageEvent, Payload, CreatePayload } from './events';
-import { convertMessage } from './converters';
+import {ConnectionState, VKBotState} from './types';
+import {createConnect} from './connection'
+import {createOn, createCommand, createAddEvent} from './events/messageEvents';
 
-abstract class BotConnection {
-  private server: string | undefined
-  private key: string | undefined
-
-  abstract messangeHandler(event: MessageEvent): void
-
-   eventHandler(updates: any[][]) {
-    updates.forEach(([eventKey, ...params]: any) => {
-      switch (eventKey) {
-        case 4:
-          const event = convertMessage(params)
-          this.messangeHandler(event)
-          break
-        
-        default:
-          // console.log(eventKey, params)
-          break
-      }
-    })
+export default class Bot {
+  private connectionState: ConnectionState = {
+    server: undefined,
+    key: undefined,
+  }
+  
+  private eventState: VKBotState = {
+    eventsHandlers: [],
   }
 
-  connectPoll(ts: string) {
-    if(this.server && this.key) {
-      connectVkPollApi({
-        server: this.server,
-        key: this.key,
-        ts,
-      })
-        .then(res => res.data)
-        .then(({ts, updates}: {
-          ts: string,
-          updates: any[][],
-        }) => {
-          this.eventHandler(updates)
-          this.connectPoll(ts)
-        })
-        .catch(() => console.log('Connect Poll Bot Error'))
-    } else {
-      throw new Error('connectPoll')
-    }
-  }
+  private configState: {} = {}
+  
+  connect = createConnect(this.connectionState, this.eventState)
 
-  connect() {
-    apiVkRequest(methods.messages.getLongPollServer)
-      .then(res => res.data)
-      .then(
-        ({response}) => {
-          this.server = response.server
-          this.key = response.key
+  on = createOn(this.eventState)
 
-          this.connectPoll(response.ts)
-        }
-      )
-      .catch(() => console.log('Connect Bot Error'))
-  }
+  command = createCommand(this.eventState)
+
+  addEvent = createAddEvent(this.eventState)
 }
-
-interface SendMessageOptions {
-  message: string
-  keyboard?: string
-  attachment?: string
-}
-
-export interface Context<T = unknown> {
-  event: MessageEvent
-
-  send: (event: MessageEvent, options: SendMessageOptions) => Promise<unknown>
-
-  payload?: Payload<T>
-
-  reply: (message: string, attachment?: string, keyboard?: string) => Promise<unknown>
-}
-
-type EventHandler<T = any> = (ctx: Context<T>) => void
-
-class VBot extends BotConnection {
-  private eventsHandlers: EventHandler[] = []
-
-  private createCtx(event: MessageEvent): Context {
-    return {
-      event,
-      payload: event.metaData.payload && JSON.parse(event.metaData.payload),
-      send: (event, ctx) => this.send(event, ctx),
-      reply: (message, attachment, keyboard) => this.send(event, {message, attachment, keyboard})
-    }
-  }
-
-  private send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions): Promise<unknown> {
-    const random_id = Math.floor(Math.random() * 10**6)
-
-    return apiVkRequest(methods.messages.send, {
-      peer_id: event.peer_id,
-      message,
-      random_id,
-      keyboard,
-      attachment,
-    })
-  }
-
-  command(command: string, eventHandler: EventHandler) {
-    this.addEvent((ctx) => {
-      if (ctx.event.text === command) {
-        eventHandler(ctx)
-      }
-    })
-  }
-
-  on<T>(createPayload: CreatePayload<T>, eventHandler: EventHandler<T>) {
-    this.addEvent((ctx) => {
-      if (ctx.payload) {
-        if (ctx.payload.type ===  createPayload(undefined as any).type) {
-          eventHandler(ctx as Context<T>)
-        }
-      }
-    })
-  }
-
-  addEvent<T>(eventHandler: EventHandler<T>) {
-    this.eventsHandlers.push(eventHandler)
-  }
-
-  messangeHandler(event: MessageEvent) {
-    console.log('Event Message =>', event)
-
-    if (event.random_id === 0) {
-      const ctx = this.createCtx(event)
-
-      this.eventsHandlers.forEach((eventHandler) => {
-        eventHandler(ctx)
-      })
-    }
-  }
-}
-
-export default VBot

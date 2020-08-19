@@ -1,3 +1,4 @@
+// import Bot from './vk/bot';
 import Bot from './vk/bot';
 import { sendGameSchema, sendStartGameSchema, sendPhoto } from './send';
 import commands from './commands';
@@ -17,6 +18,10 @@ myBot.on(createSelectPayload, (ctx) => {
 
 myBot.on(quests.questTwo.createPayload, (ctx) => {
   sendGameSchema(quests.questTwo)(ctx, ctx.payload?.data)
+})
+
+myBot.addEvent((ctx) => {
+  console.log('Event Message =>', ctx.event)
 })
 
 myBot.connect()

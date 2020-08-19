@@ -8,9 +8,7 @@ const loadPhoto = (name: string) => apiVkRequest(methods.photos.getMessagesUploa
   .then((url) => {
     const formPhoto = photoLoader(name)
     return Axios.post(url, formPhoto, {
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=${formPhoto.getBoundary()}`,
-      },
+      headers: { 'Content-Type': `multipart/form-data; boundary=${formPhoto.getBoundary()}` },
     })
   })
   .then(({data}) => apiVkRequest(methods.photos.saveMessagesPhoto, data))
