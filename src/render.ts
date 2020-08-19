@@ -1,5 +1,5 @@
 import { SchemaRoute } from "./game/schemas"
-import { createButton } from "./vk/keyboard"
+import { createButton } from "./vk/utils/keyboard"
 import { Quest } from "./quests"
 
 export const renderFromVkSchema = (quest: Quest<string>) => (schema: SchemaRoute) => {

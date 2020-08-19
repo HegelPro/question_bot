@@ -9,14 +9,8 @@ const loadPhoto = (photoFile: fs.ReadStream) => apiVkRequest(methods.photos.getM
   .then((url) => {
     const formPhoto = unknownPhotoLoader(photoFile)
     return Axios.post(url, formPhoto, {
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=${formPhoto.getBoundary()}`,
-      },
+      headers: { 'Content-Type': `multipart/form-data; boundary=${formPhoto.getBoundary()}` },
     })
-  })
-  .then((data) => {
-    console.log(data.data)
-    return data
   })
   .then(({data}) => apiVkRequest(methods.photos.saveMessagesPhoto, data))
   .then(({data: {response: [photo]}}) =>  `photo${photo.owner_id}_${photo.id}`)

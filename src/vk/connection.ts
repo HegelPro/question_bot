@@ -25,7 +25,6 @@ const createConnectPoll = (connectionState: ConnectionState, botState: VKBotStat
   }
 }
 
-
 export const createConnect = (connectionState: ConnectionState, botState: VKBotState) => () => {
   apiVkRequest(methods.messages.getLongPollServer)
     .then(res => res.data)

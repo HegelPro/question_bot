@@ -20,8 +20,8 @@ myBot.on(quests.questTwo.createPayload, (ctx) => {
   sendGameSchema(quests.questTwo)(ctx, ctx.payload?.data)
 })
 
-myBot.addEvent((ctx) => {
-  console.log('Event Message =>', ctx.event)
-})
+// myBot.addEvent((ctx) => {
+//   console.log('Event Message =>', ctx.event)
+// })
 
 myBot.connect()

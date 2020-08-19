@@ -1,7 +1,7 @@
-import { SendMessageOptions } from "../types"
-import methods from "../methods"
-import { apiVkRequest } from "../api"
-import { MessageEvent } from "../events"
+import methods from '../methods'
+import { apiVkRequest } from '../api'
+import { MessageEvent } from '../events'
+import { SendMessageOptions } from '../events/context'
 
 export function send(event: MessageEvent, {message, keyboard, attachment}: SendMessageOptions): Promise<unknown> {
   const random_id = Math.floor(Math.random() * 10**6)
@@ -13,4 +13,8 @@ export function send(event: MessageEvent, {message, keyboard, attachment}: SendM
     keyboard,
     attachment,
   })
+}
+
+export function kkkk() {
+  
 }

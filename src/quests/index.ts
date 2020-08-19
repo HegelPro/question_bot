@@ -1,3 +1,4 @@
+import path = require('path')
 import questTwo from './two'
 import { SchemaRoute } from '../game/schemas'
 import { CreatePayload, payloadCreator } from '../vk/events'
@@ -21,7 +22,7 @@ const quests: Record<QuestsNames, Quest<QuestsNames>> = {
     startVertex: '11',
     schameRecord: questTwo,
     createPayload: payloadCreator('questTwo'),
-    imageDir: '/images/questTwo',
+    imageDir: path.join(__dirname, '../../assets/images/questTwo'),
   },
 }
 

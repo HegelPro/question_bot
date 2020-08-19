@@ -1,7 +1,7 @@
-import { VKBotState, EventHandler, Context } from '../types'
+import { VKBotState, EventHandler } from '../types'
 import { CreatePayload, MessageEvent } from '.'
 import { convertMessage } from '../converters/convertMessage'
-import { createCtx } from './context'
+import { createContext, Context } from './context'
 
 export const createCommand = (botState: VKBotState) => <T>(command: string, eventHandler: EventHandler<T>) => {
   createAddEvent(botState)<T>((ctx) => {
@@ -27,7 +27,7 @@ export const createAddEvent = (botState: VKBotState) => <T>(eventHandler: EventH
 
 export const createMessangeHandler = (botState: VKBotState) => (event: MessageEvent) => {
   if (event.random_id === 0) {
-    const ctx = createCtx(event)
+    const ctx = createContext(event)
 
     botState.eventsHandlers.forEach((eventHandler) => {
       eventHandler(ctx)
