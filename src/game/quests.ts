@@ -1,7 +1,8 @@
 import path = require('path')
-import questTwo from './two'
-import { SchemaRoute } from '../game/schemas'
+import { SchemaRoute } from './schemas'
 import { CreatePayload, payloadCreator } from '../vk/events'
+import parseCvs from './parseCvs'
+import * as fs from 'fs'
 
 type QuestsNames =
   'questTwo'
@@ -20,7 +21,7 @@ const quests: Record<QuestsNames, Quest<QuestsNames>> = {
     name: 'questTwo',
     label: 'Тестовый 1',
     startVertex: '11',
-    schameRecord: questTwo,
+    schameRecord: parseCvs(fs.readFileSync(path.join(__dirname, '../../assets/shemas/questTwo.csv'), 'utf8')),
     createPayload: payloadCreator('questTwo'),
     imageDir: path.join(__dirname, '../../assets/images/questTwo'),
   },

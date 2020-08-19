@@ -1,8 +1,7 @@
-// import Bot from './vk/bot';
 import Bot from './vk/bot';
 import { sendGameSchema, sendStartGameSchema, sendPhoto } from './send';
 import commands from './commands';
-import quests, { createSelectPayload } from './quests'
+import quests, { createSelectPayload } from './game/quests'
 
 const myBot = new Bot()
 

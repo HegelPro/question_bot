@@ -1,9 +1,11 @@
 import { renderFromVkSchema } from './render';
-import {questList, Quest, createSelectPayload} from './quests'
+import {questList, Quest, createSelectPayload} from './game/quests'
 import { createButton } from './vk/utils/keyboard'
 import { Context } from './vk/events/context';
 import path = require('path');
 import isExistFile from './utils/isExistFile';
+
+const imgFormats = ['.gif', '.jpg', '.png'];
 
 export const sendGameSchema = (quest: Quest<string>) => <T>(ctx: Context<T>, routeStr?: string) => {
   if (!routeStr) throw new Error('Route is undefinded Wrong routeStr')
