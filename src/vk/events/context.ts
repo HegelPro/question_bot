@@ -5,6 +5,7 @@ import { MessageEvent, Payload } from '.'
 import {send} from '../actions'
 import { apiVkRequest } from '../api'
 import methods from '../methods'
+import { VKApiConfig } from '../types'
 
 export interface SendMessageOptions {
   message?: string
@@ -29,17 +30,17 @@ export interface Context<T = unknown> {
   loadDoc: (path: string) => Promise<string | undefined>
 }
 
-export function createContext(event: MessageEvent): Context {
+export const createContext = (apiConfigState: VKApiConfig) => (event: MessageEvent): Context => {
   return {
     event,
     payload: event.metaData.payload && JSON.parse(event.metaData.payload),
-    send: (event, options) => send(event, options),
-    reply: (message, attachment, keyboard) => send(event, {message, attachment, keyboard}),
-    sendMessage: (message) => send(event, {message}),
-    sendAttachment: (attachment) => send(event, {attachment}),
+    send: (event, options) => send(apiConfigState)(event, options),
+    reply: (message, attachment, keyboard) => send(apiConfigState)(event, {message, attachment, keyboard}),
+    sendMessage: (message) => send(apiConfigState)(event, {message}),
+    sendAttachment: (attachment) => send(apiConfigState)(event, {attachment}),
     loadPhoto: (path) =>
       // TODO - тут ничего не происходит
-      apiVkRequest(methods.photos.getMessagesUploadServer)
+      apiVkRequest(apiConfigState)(methods.photos.getMessagesUploadServer)
         .then(({data}) => data.response.upload_url)
         .then((url) => {
           const form = new FormData()
@@ -48,12 +49,12 @@ export function createContext(event: MessageEvent): Context {
             headers: { 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}` },
           })
         })
-        .then(({data}) => apiVkRequest(methods.photos.saveMessagesPhoto, data))
+        .then(({data}) => apiVkRequest(apiConfigState)(methods.photos.saveMessagesPhoto, data))
         .then(({data: {response}}: LoadedPhotoResponse) =>
           (response && response[0] && response[0].owner_id && response[0].id) ? `photo${response[0].owner_id}_${response[0].id}` : undefined
         ),
     loadDoc: (path) =>
-      apiVkRequest(methods.docs.getMessagesUploadServer, {type: 'doc', peer_id: event.peer_id})
+      apiVkRequest(apiConfigState)(methods.docs.getMessagesUploadServer, {type: 'doc', peer_id: event.peer_id})
         .then(({data}) => data.response.upload_url)
         .then((url) => {
           const form = new FormData()
@@ -63,7 +64,7 @@ export function createContext(event: MessageEvent): Context {
             headers: { 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}` },
           })
         })
-        .then(({data}) => apiVkRequest(methods.docs.save, data))
+        .then(({data}) => apiVkRequest(apiConfigState)(methods.docs.save, data))
         .then((data) => {
           console.log(data.data)
           return data

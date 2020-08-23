@@ -1,19 +1,27 @@
-import * as dotenv from 'dotenv'
+import { VKBotConfig, VKApiConfig, VKPoolConfig, VKBotConfigState } from './types'
 
-dotenv.config({path: '.env.secret'})
-
-export const VK_TOKEN = process.env.VK_TOKEN as string
-export const GROUP_ID = process.env.GROUP_ID as string
-
-export const VK_API_CONFIG = {
-  access_token: VK_TOKEN,
+const defaultVkApiConfig: Pick<VKApiConfig, 'v'> = {
   v: '5.120',
-  group_id: GROUP_ID,
 }
 
-export const VK_POLL_API_CONFIG = {
+const defaultVkPoolConfig: VKPoolConfig = {
   act: 'a_check',
   wait: 25,
   mode: 128 + 8 + 2,
   version: 2
+}
+
+export function createVkBotConfigState({pool, access_token, group_id, ...vkApiConfig}: VKBotConfig): VKBotConfigState {
+  return {
+    api: {
+      ...defaultVkApiConfig,
+      access_token,
+      group_id,
+      ...vkApiConfig,
+    },
+    pool: {
+      ...defaultVkPoolConfig,
+      ...pool,
+    },
+  }
 }

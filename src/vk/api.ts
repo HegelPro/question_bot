@@ -1,25 +1,15 @@
 import axios from 'axios'
-import {VK_API_CONFIG, VK_POLL_API_CONFIG} from './config'
+import { VKPoolConfig, VKApiConfig } from './types'
 
-export const apiVkRequest = (method: string, params = {}) =>
-  axios.get(`https://api.vk.com/method/${method}`, {params: {
-    ...VK_API_CONFIG,
-    ...params,
-  }})
+export const apiVkRequest = (apiConfig: VKApiConfig) => (method: string, params = {}) =>
+  axios.get(`https://api.vk.com/method/${method}`, {params: {...apiConfig, ...params}})
 
 
 export const connectVkPollApi = ({
   server,
-  key,
-  ts,
+  ...params
 }: {
   server: string,
   key: string,
   ts: string,
-}) => axios.get(`https://${server}`, {
-  params: {
-    key,
-    ts,
-    ...VK_POLL_API_CONFIG,
-  },
-})
+} & VKPoolConfig) => axios.get(`https://${server}`, {params})

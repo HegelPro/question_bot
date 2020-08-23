@@ -1,4 +1,4 @@
-import { VKBotState, EventHandler } from '../types'
+import { VKBotState, EventHandler, VKBotConfigState, VKApiConfig } from '../types'
 import { CreatePayload, MessageEvent } from '.'
 import { convertMessage } from '../converters/convertMessage'
 import { createContext, Context } from './context'
@@ -25,9 +25,9 @@ export const createAddEvent = (botState: VKBotState) => <T>(eventHandler: EventH
   botState.eventsHandlers.push(eventHandler)
 }
 
-export const createMessangeHandler = (botState: VKBotState) => (event: MessageEvent) => {
+export const createMessangeHandler = (apiConfigState: VKApiConfig, botState: VKBotState) => (event: MessageEvent) => {
   if (event.random_id === 0) {
-    const ctx = createContext(event)
+    const ctx = createContext(apiConfigState)(event)
 
     botState.eventsHandlers.forEach((eventHandler) => {
       eventHandler(ctx)
@@ -35,12 +35,13 @@ export const createMessangeHandler = (botState: VKBotState) => (event: MessageEv
   }
 }
 
-export const createEventHandler = (botState: VKBotState) => (updates: any[][]) => {
+export const createEventHandler = (apiConfigState: VKApiConfig, botState: VKBotState) => (updates: any[][]) => {
   updates.forEach(([eventKey, ...params]: any) => {
     switch (eventKey) {
       case 4:
         const event = convertMessage(params)
-        createMessangeHandler(botState)(event)
+        
+        createMessangeHandler(apiConfigState, botState)(event)
         break
       
       default:

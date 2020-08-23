@@ -2,8 +2,17 @@ import Bot from './vk/bot';
 import { sendGameSchema, sendStartGameSchema, sendPhoto } from './send';
 import commands from './commands';
 import quests, { createQuestSelectPayload } from './game/quests'
+import * as dotenv from 'dotenv'
 
-const myBot = new Bot()
+dotenv.config({path: '.env.secret'})
+
+export const access_token = process.env.VK_TOKEN as string
+export const group_id = process.env.GROUP_ID as string
+
+const myBot = new Bot({
+  access_token,
+  group_id,
+})
 
 myBot.command(commands['/photo'], sendPhoto)
 myBot.command(commands['/start'], sendStartGameSchema)
