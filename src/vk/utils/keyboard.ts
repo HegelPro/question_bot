@@ -6,7 +6,7 @@ interface CreateButtonOptions<T> {
 export const createButton = <T>({label, payload}: CreateButtonOptions<T>) => {
   return {
     action: {
-      type: "text",
+      type: 'text',
       payload,
       label,
     },

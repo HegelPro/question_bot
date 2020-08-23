@@ -1,8 +1,8 @@
+import fs = require('fs')
 import path = require('path')
 import { SchemaRoute } from './schemas'
 import { CreatePayload, payloadCreator } from '../vk/events'
 import parseCvs from './parseCvs'
-import * as fs from 'fs'
 
 type QuestsNames =
   'questTwo'
@@ -27,7 +27,7 @@ const quests: Record<QuestsNames, Quest<QuestsNames>> = {
   },
 }
 
-export const createSelectPayload = payloadCreator<QuestsNames>('selectEvent')
+export const createQuestSelectPayload = payloadCreator<QuestsNames>('selecQuesttEvent')
 
 export const questList = (Object.keys(quests) as QuestsNames[])
   .map(name => quests[name])

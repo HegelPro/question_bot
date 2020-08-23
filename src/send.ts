@@ -1,9 +1,9 @@
 import { renderFromVkSchema } from './render';
-import {questList, Quest, createSelectPayload} from './game/quests'
+import {questList, Quest, createQuestSelectPayload} from './game/quests'
 import { createButton } from './vk/utils/keyboard'
-import { Context } from './vk/events/context';
-import path = require('path');
-import isExistFile from './utils/isExistFile';
+import { Context } from './vk/events/context'
+import path = require('path')
+import isExistFile from './utils/isExistFile'
 
 const imgFormats = ['.gif', '.jpg', '.png'];
 
@@ -17,9 +17,9 @@ export const sendGameSchema = (quest: Quest<string>) => <T>(ctx: Context<T>, rou
   if (Object.keys(route.routes).length === 1) {
     isExistFile({
       dirName: quest.imageDir,
-      fileName: route.id + '.jpg',
+      fileName: route.id + '.gif',
     })
-      .then(path => path ? ctx.loadPhoto(path) : undefined)
+      .then(path => path ? ctx.loadDoc(path) : undefined)
       .then(photo => ctx.reply(route.text.slice(0, 500), photo))
       .then(() => sendGameSchema(quest)(ctx, route.routes[0]))
   }
@@ -27,7 +27,7 @@ export const sendGameSchema = (quest: Quest<string>) => <T>(ctx: Context<T>, rou
   else if (Object.keys(route.routes).length > 1) {
     isExistFile({
       dirName: quest.imageDir,
-      fileName: route.id + '.jpg',
+      fileName: route.id + '.gif',
     })
       .then(path => path ? ctx.loadPhoto(path) : undefined)
       .then(photo => ctx.reply(route.text.slice(0, 500), photo, renderFromVkSchema(quest)(route)))
@@ -45,13 +45,18 @@ export const sendStartGameSchema = (ctx: Context) => {
       .map(quest => [
         createButton({
           label: quest.label,
-          payload: createSelectPayload(quest.name),
+          payload: createQuestSelectPayload(quest.name),
         })
       ]),
   }))
 }
 
 export const sendPhoto = <T>(ctx: Context<T>) => {
+  ctx.loadPhoto(path.join(__dirname, '../assets//images/eltsin1.jpg'))
+    .then((attach) => ctx.reply('Фото', attach))
+}
+
+export const sendFile = <T>(ctx: Context<T>) => {
   ctx.loadPhoto(path.join(__dirname, '../assets//images/eltsin1.jpg'))
     .then((attach) => ctx.reply('Фото', attach))
 }

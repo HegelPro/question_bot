@@ -1,5 +1,5 @@
-import { SchemaRoute } from "./schemas"
-import CSVToArray from "../utils/CSVToArray"
+import { SchemaRoute } from './schemas'
+import CSVToArray from '../utils/CSVToArray'
 
 const parseCvs = (cvs: string): Record<string, SchemaRoute> =>
   CSVToArray(cvs)

@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 import {VK_API_CONFIG, VK_POLL_API_CONFIG} from './config'
 
 export const apiVkRequest = (method: string, params = {}) =>

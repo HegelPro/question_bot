@@ -8,7 +8,13 @@ export const photos = {
   saveMessagesPhoto: 'photos.saveMessagesPhoto',
 }
 
+export const docs = {
+  getMessagesUploadServer: 'docs.getMessagesUploadServer',
+  save: 'docs.save',
+}
+
 export default {
   messages,
   photos,
+  docs
 }
