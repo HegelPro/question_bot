@@ -17,9 +17,9 @@ export const sendGameSchema = (quest: Quest<string>) => <T>(ctx: Context<T>, rou
   if (Object.keys(route.routes).length === 1) {
     isExistFile({
       dirName: quest.imageDir,
-      fileName: route.id + '.gif',
+      fileName: route.id + '.jpg',
     })
-      .then(path => path ? ctx.loadDoc(path) : undefined)
+      .then(path => path ? ctx.loadPhoto(path) : undefined)
       .then(photo => ctx.reply(route.text.slice(0, 500), photo))
       .then(() => sendGameSchema(quest)(ctx, route.routes[0]))
   }
@@ -27,7 +27,7 @@ export const sendGameSchema = (quest: Quest<string>) => <T>(ctx: Context<T>, rou
   else if (Object.keys(route.routes).length > 1) {
     isExistFile({
       dirName: quest.imageDir,
-      fileName: route.id + '.gif',
+      fileName: route.id + '.jpg',
     })
       .then(path => path ? ctx.loadPhoto(path) : undefined)
       .then(photo => ctx.reply(route.text.slice(0, 500), photo, renderFromVkSchema(quest)(route)))
