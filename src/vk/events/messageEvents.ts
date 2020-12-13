@@ -36,16 +36,26 @@ export const createMessangeHandler = (apiConfigState: VKApiConfig, botState: VKB
 }
 
 export const createEventHandler = (apiConfigState: VKApiConfig, botState: VKBotState) => (updates: any[][]) => {
-  updates.forEach(([eventKey, ...params]: any) => {
-    switch (eventKey) {
-      case 4:
-        const event = convertMessage(params)
-        
-        createMessangeHandler(apiConfigState, botState)(event)
-        break
-      
-      default:
-        break
-    }
-  })
+  if(updates.forEach) {
+    
+    updates.forEach((update) => {
+      if(Array.isArray(update)) {
+        const [eventKey, ...params]: any = update
+
+        switch (eventKey) {
+          case 4:
+            const event = convertMessage(params)
+            
+            createMessangeHandler(apiConfigState, botState)(event)
+            break
+            
+          default:
+            console.log('Не поймано ', eventKey, params)
+            break
+        }
+      } else {
+        console.log(update)
+      }
+    })
+  }
 }

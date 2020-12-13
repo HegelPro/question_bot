@@ -19,17 +19,23 @@ myBot.command(commands['/start'], sendStartGameSchema)
 myBot.command(commands['Начать'], sendStartGameSchema)
 
 myBot.on(createQuestSelectPayload, ctx => {
-  if (ctx.payload?.data === 'questTwo') {
+  if (ctx.payload?.data === 'questOne') {
+    sendGameSchema(quests.questOne)(ctx, quests.questOne.startVertex)
+  } else if (ctx.payload?.data === 'questTwo') {
     sendGameSchema(quests.questTwo)(ctx, quests.questTwo.startVertex)
   }
+})
+
+myBot.on(quests.questOne.createPayload, ctx => {
+  sendGameSchema(quests.questOne)(ctx, ctx.payload?.data)
 })
 
 myBot.on(quests.questTwo.createPayload, ctx => {
   sendGameSchema(quests.questTwo)(ctx, ctx.payload?.data)
 })
 
-// myBot.addEvent((ctx) => {
-//   console.log('Event Message =>', ctx.event)
-// })
+myBot.addEvent((ctx) => {
+  console.log('Event Message =>', ctx.event)
+})
 
 myBot.connect()

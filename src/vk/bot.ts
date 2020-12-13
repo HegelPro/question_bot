@@ -1,4 +1,4 @@
-import {ConnectionState, VKBotState, VKBotConfig, VKBotConfigState} from './types';
+import {VKBotState, VKBotConfig, VKBotConfigState} from './types';
 import {createConnect} from './connection'
 import {createOn, createCommand, createAddEvent} from './events/messageEvents';
 import { createVkBotConfigState } from './config';

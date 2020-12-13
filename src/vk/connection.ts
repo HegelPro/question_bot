@@ -8,7 +8,7 @@ const createConnectPoll = (configState: VKBotConfigState, botState: VKBotState) 
   key: string,
   ts: string,
 }) => {
-  connectVkPollApi({
+  return connectVkPollApi({
     server: connectionState.server,
     key: connectionState.key,
     ts: connectionState.ts,
@@ -23,12 +23,22 @@ const createConnectPoll = (configState: VKBotConfigState, botState: VKBotState) 
 
       createConnectPoll(configState, botState)({...connectionState, ts})
     })
-    .catch(() => console.log('Connect Poll Bot Error'))
+    .catch(error => {
+      console.log('Connect pull Bot Error')
+      console.error(error)
+
+      setTimeout(() => {
+        createConnect(configState, botState)()
+      }, 500)
+    })
 }
 
 export const createConnect = (configState: VKBotConfigState, botState: VKBotState) => () => {
   apiVkRequest(configState.api)(methods.messages.getLongPollServer)
     .then(res => res.data)
     .then(({response}) => createConnectPoll(configState, botState)(response))
-    .catch(() => console.log('Connect Bot Error'))
+    .catch(error => {
+      console.log('Connect Bot Error')
+      console.error(error)
+    })
 }
